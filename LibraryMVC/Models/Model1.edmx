@@ -1,0 +1,347 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="LibraryDatabaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Book">
+          <Key>
+            <PropertyRef Name="BookId" />
+          </Key>
+          <Property Name="BookId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="HomeBranchId" Type="int" />
+          <Property Name="ISBN" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="PatronId" Type="int" />
+        </EntityType>
+        <EntityType Name="Branch">
+          <Key>
+            <PropertyRef Name="BranchId" />
+          </Key>
+          <Property Name="BranchId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="LibraryName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="LibraryAddress" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="PhoneNumber" Type="varchar" MaxLength="15" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CheckoutEvent">
+          <Key>
+            <PropertyRef Name="CheckoutEventId" />
+          </Key>
+          <Property Name="CheckoutEventId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DateTimeCheckedOut" Type="datetime" Nullable="false" />
+          <Property Name="PatronId" Type="int" Nullable="false" />
+          <Property Name="BookId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Patron">
+          <Key>
+            <PropertyRef Name="PatronId" />
+          </Key>
+          <Property Name="PatronId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" />
+          <Property Name="PreferenceBranchId" Type="int" />
+          <Property Name="PatronName" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Address" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="PatronEmail" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="PhoneNumber" Type="varchar" MaxLength="15" Nullable="false" />
+        </EntityType>
+        <Association Name="FK__Book__HomeBranch__44FF419A">
+          <End Role="Branch" Type="Self.Branch" Multiplicity="0..1" />
+          <End Role="Book" Type="Self.Book" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Branch">
+              <PropertyRef Name="BranchId" />
+            </Principal>
+            <Dependent Role="Book">
+              <PropertyRef Name="HomeBranchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Book__PatronId__72C60C4A">
+          <End Role="Patron" Type="Self.Patron" Multiplicity="0..1" />
+          <End Role="Book" Type="Self.Book" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patron">
+              <PropertyRef Name="PatronId" />
+            </Principal>
+            <Dependent Role="Book">
+              <PropertyRef Name="PatronId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__CheckoutE__BookI__71D1E811">
+          <End Role="Book" Type="Self.Book" Multiplicity="1" />
+          <End Role="CheckoutEvent" Type="Self.CheckoutEvent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Book">
+              <PropertyRef Name="BookId" />
+            </Principal>
+            <Dependent Role="CheckoutEvent">
+              <PropertyRef Name="BookId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__CheckoutE__Patro__70DDC3D8">
+          <End Role="Patron" Type="Self.Patron" Multiplicity="1" />
+          <End Role="CheckoutEvent" Type="Self.CheckoutEvent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patron">
+              <PropertyRef Name="PatronId" />
+            </Principal>
+            <Dependent Role="CheckoutEvent">
+              <PropertyRef Name="PatronId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Patron__Preferen__6E01572D">
+          <End Role="Branch" Type="Self.Branch" Multiplicity="0..1" />
+          <End Role="Patron" Type="Self.Patron" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Branch">
+              <PropertyRef Name="BranchId" />
+            </Principal>
+            <Dependent Role="Patron">
+              <PropertyRef Name="PreferenceBranchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="LibraryDatabaseModelStoreContainer">
+          <EntitySet Name="Book" EntityType="Self.Book" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Branch" EntityType="Self.Branch" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CheckoutEvent" EntityType="Self.CheckoutEvent" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Patron" EntityType="Self.Patron" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Book__HomeBranch__44FF419A" Association="Self.FK__Book__HomeBranch__44FF419A">
+            <End Role="Branch" EntitySet="Branch" />
+            <End Role="Book" EntitySet="Book" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Book__PatronId__72C60C4A" Association="Self.FK__Book__PatronId__72C60C4A">
+            <End Role="Patron" EntitySet="Patron" />
+            <End Role="Book" EntitySet="Book" />
+          </AssociationSet>
+          <AssociationSet Name="FK__CheckoutE__BookI__71D1E811" Association="Self.FK__CheckoutE__BookI__71D1E811">
+            <End Role="Book" EntitySet="Book" />
+            <End Role="CheckoutEvent" EntitySet="CheckoutEvent" />
+          </AssociationSet>
+          <AssociationSet Name="FK__CheckoutE__Patro__70DDC3D8" Association="Self.FK__CheckoutE__Patro__70DDC3D8">
+            <End Role="Patron" EntitySet="Patron" />
+            <End Role="CheckoutEvent" EntitySet="CheckoutEvent" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Patron__Preferen__6E01572D" Association="Self.FK__Patron__Preferen__6E01572D">
+            <End Role="Branch" EntitySet="Branch" />
+            <End Role="Patron" EntitySet="Patron" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="LibraryDatabaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Book">
+          <Key>
+            <PropertyRef Name="BookId" />
+          </Key>
+          <Property Name="BookId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="HomeBranchId" Type="Int32" />
+          <Property Name="ISBN" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="CheckoutEvents" Relationship="Self.FK__CheckoutE__BookI__71D1E811" FromRole="Book" ToRole="CheckoutEvent" />
+          <NavigationProperty Name="Branch" Relationship="LibraryDatabaseModel.FK__Book__HomeBranch__44FF419A" FromRole="Book" ToRole="Branch" />
+          <Property Name="PatronId" Type="Int32" />
+          <NavigationProperty Name="Patron" Relationship="LibraryDatabaseModel.FK__Book__PatronId__72C60C4A" FromRole="Book" ToRole="Patron" />
+        </EntityType>
+        <EntityType Name="CheckoutEvent">
+          <Key>
+            <PropertyRef Name="CheckoutEventId" />
+          </Key>
+          <Property Name="CheckoutEventId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DateTimeCheckedOut" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PatronId" Type="Int32" Nullable="false" />
+          <Property Name="BookId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Book" Relationship="Self.FK__CheckoutE__BookI__71D1E811" FromRole="CheckoutEvent" ToRole="Book" />
+          <NavigationProperty Name="Patron" Relationship="LibraryDatabaseModel.FK__CheckoutE__Patro__70DDC3D8" FromRole="CheckoutEvent" ToRole="Patron" />
+        </EntityType>
+        <Association Name="FK__CheckoutE__BookI__71D1E811">
+          <End Role="Book" Type="Self.Book" Multiplicity="1" />
+          <End Role="CheckoutEvent" Type="Self.CheckoutEvent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Book">
+              <PropertyRef Name="BookId" />
+            </Principal>
+            <Dependent Role="CheckoutEvent">
+              <PropertyRef Name="BookId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="LibraryDatabaseEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Books" EntityType="Self.Book" />
+          <EntitySet Name="CheckoutEvents" EntityType="Self.CheckoutEvent" />
+          <AssociationSet Name="FK__CheckoutE__BookI__71D1E811" Association="Self.FK__CheckoutE__BookI__71D1E811">
+            <End Role="Book" EntitySet="Books" />
+            <End Role="CheckoutEvent" EntitySet="CheckoutEvents" />
+          </AssociationSet>
+          <EntitySet Name="Branches" EntityType="LibraryDatabaseModel.Branch" />
+          <AssociationSet Name="FK__Book__HomeBranch__44FF419A" Association="LibraryDatabaseModel.FK__Book__HomeBranch__44FF419A">
+            <End Role="Branch" EntitySet="Branches" />
+            <End Role="Book" EntitySet="Books" />
+          </AssociationSet>
+          <EntitySet Name="Patrons" EntityType="LibraryDatabaseModel.Patron" />
+          <AssociationSet Name="FK__Book__PatronId__72C60C4A" Association="LibraryDatabaseModel.FK__Book__PatronId__72C60C4A">
+            <End Role="Patron" EntitySet="Patrons" />
+            <End Role="Book" EntitySet="Books" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Patron__Preferen__6E01572D" Association="LibraryDatabaseModel.FK__Patron__Preferen__6E01572D">
+            <End Role="Branch" EntitySet="Branches" />
+            <End Role="Patron" EntitySet="Patrons" />
+          </AssociationSet>
+          <AssociationSet Name="FK__CheckoutE__Patro__70DDC3D8" Association="LibraryDatabaseModel.FK__CheckoutE__Patro__70DDC3D8">
+            <End Role="Patron" EntitySet="Patrons" />
+            <End Role="CheckoutEvent" EntitySet="CheckoutEvents" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Branch">
+          <Key>
+            <PropertyRef Name="BranchId" />
+          </Key>
+          <Property Name="BranchId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LibraryName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LibraryAddress" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="PhoneNumber" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Books" Relationship="LibraryDatabaseModel.FK__Book__HomeBranch__44FF419A" FromRole="Branch" ToRole="Book" />
+          <NavigationProperty Name="Patrons" Relationship="LibraryDatabaseModel.FK__Patron__Preferen__6E01572D" FromRole="Branch" ToRole="Patron" />
+        </EntityType>
+        <Association Name="FK__Book__HomeBranch__44FF419A">
+          <End Type="LibraryDatabaseModel.Branch" Role="Branch" Multiplicity="0..1" />
+          <End Type="LibraryDatabaseModel.Book" Role="Book" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Branch">
+              <PropertyRef Name="BranchId" />
+            </Principal>
+            <Dependent Role="Book">
+              <PropertyRef Name="HomeBranchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Patron">
+          <Key>
+            <PropertyRef Name="PatronId" />
+          </Key>
+          <Property Name="PatronId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="PreferenceBranchId" Type="Int32" />
+          <Property Name="PatronName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="PatronEmail" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumber" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Books" Relationship="LibraryDatabaseModel.FK__Book__PatronId__72C60C4A" FromRole="Patron" ToRole="Book" />
+          <NavigationProperty Name="Branch" Relationship="LibraryDatabaseModel.FK__Patron__Preferen__6E01572D" FromRole="Patron" ToRole="Branch" />
+          <NavigationProperty Name="CheckoutEvents" Relationship="LibraryDatabaseModel.FK__CheckoutE__Patro__70DDC3D8" FromRole="Patron" ToRole="CheckoutEvent" />
+        </EntityType>
+        <Association Name="FK__Book__PatronId__72C60C4A">
+          <End Type="LibraryDatabaseModel.Patron" Role="Patron" Multiplicity="0..1" />
+          <End Type="LibraryDatabaseModel.Book" Role="Book" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patron">
+              <PropertyRef Name="PatronId" />
+            </Principal>
+            <Dependent Role="Book">
+              <PropertyRef Name="PatronId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Patron__Preferen__6E01572D">
+          <End Type="LibraryDatabaseModel.Branch" Role="Branch" Multiplicity="0..1" />
+          <End Type="LibraryDatabaseModel.Patron" Role="Patron" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Branch">
+              <PropertyRef Name="BranchId" />
+            </Principal>
+            <Dependent Role="Patron">
+              <PropertyRef Name="PreferenceBranchId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__CheckoutE__Patro__70DDC3D8">
+          <End Type="LibraryDatabaseModel.Patron" Role="Patron" Multiplicity="1" />
+          <End Type="LibraryDatabaseModel.CheckoutEvent" Role="CheckoutEvent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patron">
+              <PropertyRef Name="PatronId" />
+            </Principal>
+            <Dependent Role="CheckoutEvent">
+              <PropertyRef Name="PatronId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="LibraryDatabaseModelStoreContainer" CdmEntityContainer="LibraryDatabaseEntities">
+          <EntitySetMapping Name="Books">
+            <EntityTypeMapping TypeName="LibraryDatabaseModel.Book">
+              <MappingFragment StoreEntitySet="Book">
+                <ScalarProperty Name="PatronId" ColumnName="PatronId" />
+                <ScalarProperty Name="BookId" ColumnName="BookId" />
+                <ScalarProperty Name="HomeBranchId" ColumnName="HomeBranchId" />
+                <ScalarProperty Name="ISBN" ColumnName="ISBN" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CheckoutEvents">
+            <EntityTypeMapping TypeName="LibraryDatabaseModel.CheckoutEvent">
+              <MappingFragment StoreEntitySet="CheckoutEvent">
+                <ScalarProperty Name="CheckoutEventId" ColumnName="CheckoutEventId" />
+                <ScalarProperty Name="DateTimeCheckedOut" ColumnName="DateTimeCheckedOut" />
+                <ScalarProperty Name="PatronId" ColumnName="PatronId" />
+                <ScalarProperty Name="BookId" ColumnName="BookId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Branches">
+            <EntityTypeMapping TypeName="LibraryDatabaseModel.Branch">
+              <MappingFragment StoreEntitySet="Branch">
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="LibraryAddress" ColumnName="LibraryAddress" />
+                <ScalarProperty Name="LibraryName" ColumnName="LibraryName" />
+                <ScalarProperty Name="BranchId" ColumnName="BranchId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Patrons">
+            <EntityTypeMapping TypeName="LibraryDatabaseModel.Patron">
+              <MappingFragment StoreEntitySet="Patron">
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="PatronEmail" ColumnName="PatronEmail" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="PatronName" ColumnName="PatronName" />
+                <ScalarProperty Name="PreferenceBranchId" ColumnName="PreferenceBranchId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="PatronId" ColumnName="PatronId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

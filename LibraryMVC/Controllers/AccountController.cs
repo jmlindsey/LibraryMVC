@@ -9,6 +9,10 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using LibraryMVC.Models;
+using System.Net;
+using System.Data.Entity;
+using LibraryMVC.Models.ViewModels;
+using System.Collections.Generic;
 
 namespace LibraryMVC.Controllers
 {
@@ -17,16 +21,73 @@ namespace LibraryMVC.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private LibraryDatabaseEntities db = new LibraryDatabaseEntities();
+
 
         public AccountController()
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        // GET: Account/PatronProfile
+        public ActionResult PatronProfile()
         {
-            UserManager = userManager;
-            SignInManager = signInManager;
+            string userId = User.Identity.GetUserId();
+
+            Patron patron = db.Patrons.Single(p => p.UserId == userId);
+            if (patron == null)
+            {
+                return HttpNotFound();
+            }
+            var checkoutEvents = patron.CheckoutEvents.OrderBy(x => x.DateTimeCheckedOut);
+            var checkoutIds = checkoutEvents.Select(x => x.BookId);
+            var checkoutTitles = checkoutIds.Select(x => db.Books.Find(x).Title).ToArray();
+            var currentTitles = patron.Books.Select(x => x.Title).ToArray();
+            var currentIds = patron.Books.Select(x => x.BookId).ToArray();
+            PatronViewModel patronVM = new PatronViewModel
+            {
+                PatronId = patron.PatronId,
+                Address = patron.Address,
+                CheckoutTitles = checkoutTitles,
+                CheckoutDates = patron.CheckoutEvents.Select(x => x.DateTimeCheckedOut).ToArray(),
+                PatronName = patron.PatronName,
+                PhoneNumber = patron.PhoneNumber,
+                PreferenceBranchId = patron.PreferenceBranchId,
+                PreferenceBranchName = db.Branches.Find(patron.PreferenceBranchId).LibraryName,
+                BooksCurrentlyRentedIds = patron.Books.Select(x => x.BookId).ToArray(),
+                BooksCurrentlyRentedTitles = patron.Books.Select(x => x.Title).ToArray()
+            };
+
+            ViewBag.PreferenceBranchId = new SelectList(db.Branches, "BranchId", "LibraryName", patronVM.PreferenceBranchId);
+            return View(patronVM);
         }
+
+        // POST: Account/PatronProfile
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult PatronProfile([Bind(Include = "PatronId,PreferenceBranchId,PatronName,Address,PhoneNumber")] PatronViewModel patronVm)
+        {
+            if (ModelState.IsValid)
+            {
+                var patron = db.Patrons.Find(patronVm.PatronId);
+                patron.PatronName = patronVm.PatronName;
+                patron.PhoneNumber = patronVm.PhoneNumber;
+                patron.PreferenceBranchId = patronVm.PreferenceBranchId;
+                patron.Address = patronVm.Address;
+                db.Entry(patron).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index", "Branches");
+            }
+            ViewBag.PreferenceBranchId = new SelectList(db.Branches, "BranchId", "LibraryName", patronVm.PreferenceBranchId);
+            return View(patronVm);
+        }
+
+        //public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        //{
+        //    UserManager = userManager;
+        //    SignInManager = signInManager;
+        //}
 
         public ApplicationSignInManager SignInManager
         {
@@ -139,9 +200,10 @@ namespace LibraryMVC.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
+            ViewBag.branches = new SelectList(db.Branches, "BranchId", "LibraryName");
             return View();
         }
-
+        
         //
         // POST: /Account/Register
         [HttpPost]
@@ -151,18 +213,35 @@ namespace LibraryMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                //ViewBag.PreferenceBranchId = new SelectList(db.Branches, "BranchId", "LibraryName");
+
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email};
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    Patron patron = new Patron
+                    {
+                        Address = model.Address,
+                        PatronEmail = model.Email,
+                        UserId = user.Id,
+                        PatronName = model.PatronName,
+                        PhoneNumber = model.PhoneNumber,
+                        PreferenceBranchId = model.PreferenceBranchId
+
+                    };
+                    //var userId = UserManager.FindByEmail(model.Email).Id;
+                    patron.Branch = db.Branches.Single(x => x.BranchId == patron.PreferenceBranchId);
+                    db.Patrons.Add(patron);
+                    db.SaveChanges();
+
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
+                    ViewBag.PreferenceBranchId = new SelectList(db.Branches, "BranchId", "LibraryName", patron.Branch);
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
@@ -392,7 +471,7 @@ namespace LibraryMVC.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Branches");
         }
 
         //
@@ -449,7 +528,7 @@ namespace LibraryMVC.Controllers
             {
                 return Redirect(returnUrl);
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Branches");
         }
 
         internal class ChallengeResult : HttpUnauthorizedResult

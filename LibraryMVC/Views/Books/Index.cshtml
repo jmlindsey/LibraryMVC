@@ -1,0 +1,49 @@
+﻿@model IEnumerable<LibraryMVC.Models.Book>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Available Titles</h2>
+
+<p>
+    @Html.ActionLink("View All Books", "Index", new { id=string.Empty })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ISBN)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Branch.LibraryName)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ISBN)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Branch.LibraryName)
+        </td>
+        
+        @if (Model.Single(book => book.BookId == item.BookId).Patron == null)
+        {
+        <td>
+            @Html.ActionLink("Details", "Details", new { id = item.BookId }, null)|
+
+            @Html.ActionLink("Check out", "CheckOut", new { id = item.BookId }, null)
+        </td>
+        }
+    </tr>
+}
+
+</table>

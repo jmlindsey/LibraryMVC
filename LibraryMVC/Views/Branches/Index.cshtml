@@ -1,0 +1,41 @@
+﻿@model IEnumerable<LibraryMVC.Models.Branch>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Branches</h2>
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.LibraryName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LibraryAddress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PhoneNumber)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.LibraryName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LibraryAddress)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PhoneNumber)
+        </td>
+        <td>
+            @Html.ActionLink("View all Books", "Index", "Books", new { id=item.BranchId }, null)
+        </td>
+    </tr>
+}
+
+</table>

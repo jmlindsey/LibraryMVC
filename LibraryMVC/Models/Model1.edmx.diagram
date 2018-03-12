@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="45c9ef41f1dc48f9b33e2e39d36bdcce" Name="Diagram1" ZoomLevel="91">
+        <EntityTypeShape EntityType="LibraryDatabaseModel.Book" Width="1.5" PointX="3" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="LibraryDatabaseModel.CheckoutEvent" Width="1.5" PointX="5.25" PointY="2.875" IsExpanded="true" />
+        <AssociationConnector Association="LibraryDatabaseModel.FK__CheckoutE__BookI__71D1E811" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="LibraryDatabaseModel.Branch" Width="1.5" PointX="0.75" PointY="2.875" />
+        <AssociationConnector Association="LibraryDatabaseModel.FK__Book__HomeBranch__44FF419A" />
+        <EntityTypeShape EntityType="LibraryDatabaseModel.Patron" Width="1.5" PointX="3" PointY="4.5" />
+        <AssociationConnector Association="LibraryDatabaseModel.FK__Book__PatronId__72C60C4A" />
+        <AssociationConnector Association="LibraryDatabaseModel.FK__Patron__Preferen__6E01572D" />
+        <AssociationConnector Association="LibraryDatabaseModel.FK__CheckoutE__Patro__70DDC3D8" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,60 @@
+﻿@model LibraryMVC.Models.Book
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Book</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ISBN)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ISBN)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Branch.LibraryName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Branch.LibraryName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CheckoutEvents)
+        </dt>
+        @foreach(var item in Model.CheckoutEvents)
+        {
+            <dt>
+                @Html.DisplayNameFor(modelItem => item.Book.Title)
+            </dt>
+            <dd>
+                @Html.DisplayFor(modelItem => item.Book.Title)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(modelItem => item.DateTimeCheckedOut)
+            </dt>
+            <dd>
+                @Html.DisplayFor(modelItem => item.DateTimeCheckedOut)
+            </dd>
+        }
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.BookId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

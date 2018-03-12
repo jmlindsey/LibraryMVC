@@ -1,0 +1,79 @@
+﻿@model LibraryMVC.Models.ViewModels.PatronViewModel
+
+@{
+    ViewBag.Title = "Patron Profile";
+}
+
+<h2>Patron Profile</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.PatronId)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PreferenceBranchName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.PreferenceBranchId, null, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PreferenceBranchId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PatronName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PatronName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PatronName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<dl>
+    <dt>
+        @Html.LabelFor(model => model.BooksCurrentlyRentedTitles)
+    </dt>
+        @for (int i = 0; i < Model.BooksCurrentlyRentedTitles.Length; i++)
+        {
+            <dd>@Model.BooksCurrentlyRentedTitles[i]</dd>
+            <dd>@Html.ActionLink("Check in", "CheckIn", "Books", new { id = Model.BooksCurrentlyRentedIds[i] }, null)</dd>
+        }
+
+    <dt>
+        @Html.LabelFor(model => model.CheckoutTitles)
+    </dt>
+        @for (int i = 0; i < Model.CheckoutTitles.Length; i++)
+        {
+            <dd>@Model.CheckoutTitles[i]</dd>
+            <dd>@Model.CheckoutDates[i]</dd>
+
+        }
+</dl>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
